@@ -33,7 +33,10 @@ enum OperatorType
     OP_GT,
     OP_LT,
     OP_GEQ,
-    OP_LEQ
+    OP_LEQ,
+    OP_MADD, //++
+    OP_MSUB,  //--
+    OP_LAND //&
 };
 
 //语句：赋值（=）、if、while、for、return.
@@ -41,10 +44,17 @@ enum StmtType {
     STMT_SKIP,
     STMT_DECL,
     STMT_ASSIGN,
+    STMT_ASSIGN_ADD,
+    STMT_ASSIGN_SUB,
+    STMT_ASSIGN_MUL,
+    STMT_ASSIGN_DIV,
     STMT_IF,
     STMT_WHILE,
     STMT_FOR,
-    STMT_RETURN
+    STMT_RETURN,
+    STMT_SCANF,
+    STMT_PRINTF,
+    STMT_MAIN
 }
 ;
 

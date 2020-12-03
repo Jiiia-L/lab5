@@ -25,6 +25,10 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 "bool" return T_BOOL;
 "string" return T_STRING;
 "char" return T_CHAR;
+"void" return VOID;
+"printf" return PRINTF;
+"scanf" return SCANF;
+"main" return MAIN;
 
 "==" return EQUAL;
 "!=" return NEQ;
@@ -39,9 +43,15 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 "%" return MOD;
 "!" return NOT;
 "=" return LOP_ASSIGN;
-"||" return AND;
-"&&" return OR;
-
+"||" return OR;
+"&&" return AND;
+"&" return LAND;
+"+=" return ADD_ASSIGN;
+"-=" return SUB_ASSIGN;
+"*=" return MUL_ASSIGN;
+"/=" return DIV_ASSIGN;
+"++" return MADD;
+"--" return MSUB;
 
 ";" return  SEMICOLON;
 "," return COMMA;

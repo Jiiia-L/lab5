@@ -6,19 +6,21 @@
     int yylex();
     int yyerror( char const * );
 %}
-%token T_CHAR T_INT T_STRING T_BOOL 
+%token T_CHAR T_INT T_STRING T_BOOL VOID
 
-%token LOP_ASSIGN 
+%token LOP_ASSIGN ADD_ASSIGN SUB_ASSIGN MUL_ASSIGN DIV_ASSIGN
 
 %token S_IF S_WHILE S_RETURN S_FOR
 
 %token LPAREN RPAREN LBRACE RBRACE SEMICOLON COMMA
 
-%token OR AND EQUAL NEQ GT LT GEQ LEQ ADD SUB MUL DIV MOD NOT 
+%token OR AND EQUAL NEQ GT LT GEQ LEQ ADD SUB MUL DIV MOD NOT LAND 
 
 %token TRUE FALSE
 
 %token IDENTIFIER INTEGER CHAR BOOL STRING
+
+%token PRINTF SCANF MAIN
 
 %right LOP_ASSIGN
 %left OR
@@ -27,7 +29,9 @@
 %left GT LT GEQ LEQ
 %left ADD SUB
 %left MUL DIV MOD
-%right UMINUS UPLUS NOT 
+%right NOT 
+%right UMINUS UPLUS LAND
+%left MADD MSUB
 
 
 %%
@@ -49,6 +53,9 @@ statement
 | while {$$=$1;}
 | for {$$=$1;}
 | return SEMICOLON {$$=$1;}
+| printf SEMICOLON {$$=$1;}
+| scanf SEMICOLON {$$=$1;}
+| main {$$=$1;}
 ;
 
 declaration
@@ -82,10 +89,38 @@ assign
     node->addChild($3);
     $$ = node;   
 } 
+|IDENTIFIER ADD_ASSIGN expr{  // declare and init
+    TreeNode* node = new TreeNode($1->lineno, NODE_STMT);
+    node->stype = STMT_ASSIGN_ADD;
+    node->addChild($1);
+    node->addChild($3);
+    $$ = node;   
+} 
+|IDENTIFIER SUB_ASSIGN expr{  // declare and init
+    TreeNode* node = new TreeNode($1->lineno, NODE_STMT);
+    node->stype = STMT_ASSIGN_SUB;
+    node->addChild($1);
+    node->addChild($3);
+    $$ = node;   
+} 
+|IDENTIFIER MUL_ASSIGN expr{  // declare and init
+    TreeNode* node = new TreeNode($1->lineno, NODE_STMT);
+    node->stype = STMT_ASSIGN_MUL;
+    node->addChild($1);
+    node->addChild($3);
+    $$ = node;   
+} 
+|IDENTIFIER DIV_ASSIGN expr{  // declare and init
+    TreeNode* node = new TreeNode($1->lineno, NODE_STMT);
+    node->stype = STMT_ASSIGN_DIV;
+    node->addChild($1);
+    node->addChild($3);
+    $$ = node;   
+} 
 ;
 
 if
-: S_IF LPAREN expr  RPAREN statements{
+: S_IF  LPAREN expr RPAREN statements{
     TreeNode* node = new TreeNode($1->lineno, NODE_STMT);
     node->stype = STMT_IF;
     node->addChild($3);
@@ -95,7 +130,7 @@ if
 ;
 
 while
-: S_WHILE LPAREN expr RPAREN statements{
+: S_WHILE  LPAREN expr RPAREN statements{
     TreeNode* node = new TreeNode($1->lineno, NODE_STMT);
     node->stype = STMT_WHILE;
     node->addChild($3);
@@ -255,6 +290,46 @@ return
 }
 ;
 
+printf
+: PRINTF LPAREN funcRParams RPAREN {
+    TreeNode *node=new TreeNode(lineno,NODE_STMT);
+    node->stype=STMT_PRINTF;
+    node->addChild($3);
+    node->lineno = $3->lineno;
+    $$=node;
+}
+;
+
+scanf
+: SCANF LPAREN funcRParams RPAREN {
+    TreeNode *node=new TreeNode(lineno,NODE_STMT);
+    node->stype=STMT_SCANF;
+    node->addChild($3);
+    node->lineno = $3->lineno;
+    $$=node;
+}
+;
+
+funcRParams
+: expr {$$ = $1;}
+| expr COMMA funcRParams {
+    $1->addSibling($3);
+    $$ = $1;
+}
+| {$$=nullptr;}
+;
+
+main
+: T MAIN LPAREN funcRParams RPAREN statements {
+    TreeNode *node = new TreeNode(lineno,NODE_STMT);
+    node->stype = STMT_MAIN;
+    node->addChild($1);
+    node->addChild($4);
+    node->addChild($6);
+    node->lineno = $1->lineno;
+    $$ = node;
+}
+;
 
 expr
 : IDENTIFIER {
@@ -389,12 +464,34 @@ expr
     node->addChild($2);
     $$=node; 
 }
+| expr MADD {
+    TreeNode *node=new TreeNode($2->lineno,NODE_EXPR);
+    node->optype=OP_MADD;
+    //node->addChild($1);
+    node->addChild($1);
+    $$=node; 
+}
+| expr MSUB{
+    TreeNode *node=new TreeNode($2->lineno,NODE_EXPR);
+    node->optype=OP_MSUB;
+    //node->addChild($1);
+    node->addChild($1);
+    $$=node; 
+}
+| LAND expr{
+     TreeNode *node=new TreeNode($1->lineno,NODE_EXPR);
+    node->optype=OP_LAND;
+    //node->addChild($1);
+    node->addChild($2);
+    $$=node;
+}
 ;
 
 T: T_INT {$$ = new TreeNode(lineno, NODE_TYPE); $$->type = TYPE_INT;} 
 | T_CHAR {$$ = new TreeNode(lineno, NODE_TYPE); $$->type = TYPE_CHAR;}
 | T_BOOL {$$ = new TreeNode(lineno, NODE_TYPE); $$->type = TYPE_BOOL;}
 | T_STRING {$$ = new TreeNode(lineno,NODE_TYPE); $$->type=TYPE_STRING;}
+| VOID {$$ = new TreeNode(lineno,NODE_TYPE); $$->type=TYPE_VOID;}
 ;
 
 %%

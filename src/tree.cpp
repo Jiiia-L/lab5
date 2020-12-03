@@ -79,6 +79,7 @@ void TreeNode::printSpecialInfo() {
             break;
         case NODE_EXPR:
             this->printChildrenId();
+            cout<<"optype: "<<opType2String(this->optype);
             break;
         case NODE_STMT:
             this->printChildrenId();
@@ -101,6 +102,14 @@ string TreeNode::sType2String(StmtType type) {
             return "decl";
         case STMT_ASSIGN:
             return "assign";
+        case STMT_ASSIGN_ADD:
+            return "assign_add";
+        case STMT_ASSIGN_DIV:
+            return "assign_div";
+        case STMT_ASSIGN_MUL:
+            return "assign_mul";
+        case STMT_ASSIGN_SUB:
+            return "assign_sub";
         case STMT_IF:
             return "if";
         case STMT_WHILE:
@@ -109,6 +118,12 @@ string TreeNode::sType2String(StmtType type) {
             return "for";
         case STMT_RETURN:
             return "return";
+        case STMT_MAIN:
+            return "main";
+        case STMT_SCANF:
+            return "scanf";
+        case STMT_PRINTF:
+            return "printf";
         default:
             return "?";
     }
@@ -140,4 +155,58 @@ string TreeNode::nodeType2String (NodeType type){
         //CHILD="children:[ ";
     }
     return NODETYPE;
+}
+
+string TreeNode::opType2String(OperatorType type) {
+    switch (type)
+    {
+    case OP_EQ:
+        return "==";
+        break;
+    case OP_NOT:
+        return "!";
+    case OP_AND:
+        return "&&";
+    case OP_OR:
+        return "||";
+    case OP_SUB:
+        return "-";
+    case OP_ADD:
+        return "+";
+
+    case OP_DIV:
+        return "/";
+        break;
+    case OP_MUL:
+        return "*";
+    case OP_MOD:
+        return "%";
+    case OP_UMINUS:
+        return "-";
+    case OP_UPLUS:
+        return "+";
+    case OP_EQUAL:
+        return "==";
+
+    case OP_NEQ:
+        return "!=";
+        break;
+    case OP_GT:
+        return ">";
+    case OP_LT:
+        return "<";
+    case OP_GEQ:
+        return ">=";
+    case OP_LEQ:
+        return "<=";
+    case OP_MADD:
+        return "++";
+    case OP_MSUB:
+        return "--";
+    case OP_LAND:
+        return "&";
+    default:
+        return "?";
+        break;
+    }
 }
