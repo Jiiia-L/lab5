@@ -10,6 +10,8 @@
 
 %token LOP_ASSIGN 
 
+%token S_IF S_WHILE S_RETURN S_FOR
+
 %token SEMICOLON
 
 %token IDENTIFIER INTEGER CHAR BOOL STRING
@@ -29,6 +31,11 @@ statements
 statement
 : SEMICOLON  {$$ = new TreeNode(lineno, NODE_STMT); $$->stype = STMT_SKIP;}
 | declaration SEMICOLON {$$ = $1;}
+| assign SEMICOLON {$$=$1;}
+// | if {$$=$1;}
+// | while {$$=$1;}
+// | for {$$=$1;}
+// | return {$$=$1;}
 ;
 
 declaration
@@ -49,6 +56,18 @@ declaration
 }
 ;
 
+assign
+: IDENTIFIER LOP_ASSIGN expr{  // declare and init
+    TreeNode* node = new TreeNode($1->lineno, NODE_STMT);
+    node->stype = STMT_ASSIGN;
+    node->addChild($1);
+    node->addChild($3);
+    $$ = node;   
+} 
+;
+
+
+
 expr
 : IDENTIFIER {
     $$ = $1;
@@ -67,6 +86,7 @@ expr
 T: T_INT {$$ = new TreeNode(lineno, NODE_TYPE); $$->type = TYPE_INT;} 
 | T_CHAR {$$ = new TreeNode(lineno, NODE_TYPE); $$->type = TYPE_CHAR;}
 | T_BOOL {$$ = new TreeNode(lineno, NODE_TYPE); $$->type = TYPE_BOOL;}
+| T_STRING {$$ = new TreeNode(lineno,NODE_TYPE); $$->type=TYPE_STRING;}
 ;
 
 %%

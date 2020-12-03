@@ -20,9 +20,15 @@ enum OperatorType
     OP_EQ,  // ==
 };
 
+//语句：赋值（=）、if、while、for、return.
 enum StmtType {
     STMT_SKIP,
     STMT_DECL,
+    STMT_ASSIGN,
+    STMT_IF,
+    STMT_WHILE,
+    STMT_FOR,
+    STMT_RETURN
 }
 ;
 

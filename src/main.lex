@@ -23,11 +23,17 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 
 "int" return T_INT;
 "bool" return T_BOOL;
+"string" return T_STRING;
 "char" return T_CHAR;
 
 "=" return LOP_ASSIGN;
 
 ";" return  SEMICOLON;
+
+"if" return S_IF;
+"while" return S_WHILE;
+"return" return S_RETURN;
+"for" return S_FOR;
 
 {INTEGER} {
     TreeNode* node = new TreeNode(lineno, NODE_CONST);
@@ -40,9 +46,17 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 {CHAR} {
     TreeNode* node = new TreeNode(lineno, NODE_CONST);
     node->type = TYPE_CHAR;
-    node->int_val = yytext[1];
+    node->ch_val = yytext[1];
     yylval = node;
     return CHAR;
+}
+
+{STRING} {
+    TreeNode* node = new TreeNode(lineno, NODE_CONST);
+    node->type = TYPE_STRING;
+    node->str_val = yytext;
+    yylval = node;
+    return STRING;
 }
 
 {IDENTIFIER} {
