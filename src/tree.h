@@ -18,6 +18,22 @@ enum NodeType
 enum OperatorType
 {
     OP_EQ,  // ==
+    OP_NOT, //!
+    OP_AND, //&&
+    OP_OR, //||
+    OP_ADD,
+    OP_SUB,
+    OP_DIV,
+    OP_MUL,
+    OP_MOD,
+    OP_UMINUS,
+    OP_UPLUS,
+    OP_EQUAL,
+    OP_NEQ,
+    OP_GT,
+    OP_LT,
+    OP_GEQ,
+    OP_LEQ
 };
 
 //语句：赋值（=）、if、while、for、return.

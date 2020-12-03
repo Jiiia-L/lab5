@@ -75,6 +75,7 @@ void TreeNode::printSpecialInfo() {
             cout<<"type: "<<this->type->getTypeInfo();
             break;
         case NODE_VAR:
+            cout<<"varname: "<<this->var_name;
             break;
         case NODE_EXPR:
             this->printChildrenId();
